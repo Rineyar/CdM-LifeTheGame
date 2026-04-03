@@ -60,11 +60,16 @@ main>
     shl r5
     add r2,r5
 
+    ldi r3, 0b1010101010101010
+    ldi r4,2
+
     while
         cmp r2,r5
     stays lt
-        inc r2
-        inc r2
+        st r2,r3
+        shl r3
+        #inc r2
+        add r4,r2
     wend
 
     halt
