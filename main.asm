@@ -53,24 +53,63 @@ main>
         restore r0
     mend
 
+    macro putw/2
+        ldi r2, $1
+        ldi r3, $2
+        st  r2, r3
+    mend
+
     ldv r1,mem1
-    ldv r2,mem1
 
-    ldv r5,len
-    shl r5
-    add r2,r5
+    ldi r4, 0x00A6      
+    ldi r5, 0x0008      
+    st  r4, r5
 
-    ldi r3, 0b1010101010101010
-    ldi r4,2
+    ldi r4, 0x00A8      
+    ldi r5, 0x0028      
+    st  r4, r5
 
-    while
-        cmp r2,r5
-    stays lt
-        st r2,r3
-        shl r3
-        #inc r2
-        add r4,r2
-    wend
+    ldi r4, 0x00AA      
+    ldi r5, 0x0018      
+    st  r4, r5
+
+    ldi r4, 0x00BC      
+    ldi r5, 0x0008
+    st  r4, r5
+
+    ldi r4, 0x00BE      
+    ldi r5, 0x0028
+    st  r4, r5
+
+    ldi r4, 0x00C0      
+    ldi r5, 0x0018
+    st  r4, r5
+
+
+    ldi r4, 0x00D0      
+    ldi r5, 0x0008
+    st  r4, r5
+
+    ldi r4, 0x00D2      
+    ldi r5, 0x0028
+    st  r4, r5
+
+    ldi r4, 0x00D4      
+    ldi r5, 0x0018
+    st  r4, r5
+
+
+    ldi r4, 0x00A6      
+    ldi r5, 0x0400      
+    st  r4, r5
+
+    ldi r4, 0x00A8      
+    ldi r5, 0x1400      
+    st  r4, r5
+
+    ldi r4, 0x00AA      
+    ldi r5, 0x0C00      
+    st  r4, r5
 
     halt
 
