@@ -6368,9 +6368,25 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <a name="circuit" val="but_control"/>
     <a name="clabel" val="button controller"/>
     <a name="clabelup" val="east"/>
-    <a name="clabelfont" val="SansSerif plain 12"/>
+    <a name="clabelfont" val="SansSerif bold 12"/>
     <appear>
       <rect fill="none" height="160" stroke="#000000" stroke-width="2" width="60" x="50" y="30"/>
+      <polyline fill="none" points="62,168 67,173 61,173" stroke="#000000" stroke-width="2"/>
+      <polyline fill="none" points="81,173 74,175 80,178" stroke="#000000" stroke-width="2"/>
+      <path d="M67,177 Q66,180 70,178" fill="none" stroke="#000000"/>
+      <path d="M73,178 Q73,182 70,178" fill="none" stroke="#000000"/>
+      <polyline fill="none" points="80,179 88,182" stroke="#000000"/>
+      <polyline fill="none" points="79,181 83,184" stroke="#000000"/>
+      <polyline fill="none" points="78,182 82,190" stroke="#000000"/>
+      <polyline fill="none" points="59,173 52,173" stroke="#000000"/>
+      <polyline fill="none" points="58,175 51,177" stroke="#000000"/>
+      <polyline fill="none" points="59,177 52,181" stroke="#000000"/>
+      <polyline fill="none" points="75,168 91,164 84,176" stroke="#000000" stroke-width="2"/>
+      <polyline fill="none" points="56,169 60,154 69,166 71,166" stroke="#000000" stroke-width="2"/>
+      <polyline fill="none" points="61,180 63,183 63,185 64,187 62,188 65,191" stroke="#000000" stroke-width="2"/>
+      <polyline fill="none" points="75,183 73,185 74,186 73,188 74,190" stroke="#000000" stroke-width="2"/>
+      <polyline fill="#f8ff00" points="97,172 100,167 100,173 106,173 100,176 100,182 97,176 93,178 95,175 93,170" stroke="#000000" stroke-width="2"/>
+      <polyline fill="none" points="93,170 97,173" stroke="#000000" stroke-width="2"/>
       <circ-port height="8" pin="70,600" width="8" x="46" y="176"/>
       <circ-port height="10" pin="600,180" width="10" x="105" y="115"/>
       <circ-port height="8" pin="90,50" width="8" x="106" y="136"/>
