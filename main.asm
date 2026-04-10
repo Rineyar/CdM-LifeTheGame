@@ -1,6 +1,8 @@
 asect 0
 main: ext               # Declare labels
 default_handler: ext    # as external
+key_handler: ext
+button_flag: ext
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -10,6 +12,8 @@ dc default_handler, 0   # Unaligned SP
 dc default_handler, 0   # Unaligned PC
 dc default_handler, 0   # Invalid instruction
 dc default_handler, 0   # Double fault
+
+dc key_handler, 0
 align 0x0080            # Reserve space for the rest 
                         # of IVT
 
@@ -20,14 +24,78 @@ rsect exc_handlers
 default_handler>
     halt
 
+#IRQ handlers section
+rsect irq_handlers
+
+key_handler>
+    ldi r0, 0xfff0
+    ld r0, r0
+    ld r1, r3
+    ldi r2, 8
+    # Pointer up
+    if 
+        cmp r0, r2
+    is z
+        xor r4, r3, r3
+        rol r4
+        or r4, r3, r3
+        st r1, r3
+    fi
+    shl r2
+    # Pointer right
+    if 
+        cmp r0, r2
+    is z
+        xor r4, r3
+        st r1, r3
+        inc r1
+        inc r1
+        ld r1, r3
+        or r4, r3
+        st r1, r3 
+    fi
+    shl r2
+    # Pointer left
+    if 
+        cmp r0, r2
+    is z
+        xor r4, r3
+        st r1, r3
+        dec r1
+        dec r1
+        ld r1, r3
+        or r4, r3
+        st r1, r3 
+    fi
+    shl r2
+    # Pointer down
+    if 
+        cmp r0, r2
+    is z
+        xor r4, r3
+        ror r4
+        or r4, r3
+        st r1, r3
+    fi
+    shl r2
+    # Set current cell
+    if 
+        cmp r0, r2
+    is z
+        xor r4, r3
+        st r1, r3
+    fi
+    rti
+
 # Main program section
 rsect main
-
+button_flag: dc  0xfff0
 asect 0x0080 #Переменные
 len: dc 256 #len*16 - матрица 64*64
 memtmp: dc 0x0080
 mem1: dc 0x00A0 #адрес первой матрицы
 mem2: dc 0x02A0 #адрес второй матрицы
+
 align 0x02A0
 
 asect 0x02A0 
@@ -39,7 +107,6 @@ asect 0x0500
 
 main>
     # your code here
-    clr r0
 
     macro ldv/2
         ldi $1,$2
@@ -59,58 +126,14 @@ main>
         st  r2, r3
     mend
 
-    ldv r1,mem1
-
-    ldi r4, 0x00A6      
-    ldi r5, 0x0008      
-    st  r4, r5
-
-    ldi r4, 0x00A8      
-    ldi r5, 0x0028      
-    st  r4, r5
-
-    ldi r4, 0x00AA      
-    ldi r5, 0x0018      
-    st  r4, r5
-
-    ldi r4, 0x00BC      
-    ldi r5, 0x0008
-    st  r4, r5
-
-    ldi r4, 0x00BE      
-    ldi r5, 0x0028
-    st  r4, r5
-
-    ldi r4, 0x00C0      
-    ldi r5, 0x0018
-    st  r4, r5
-
-
-    ldi r4, 0x00D0      
-    ldi r5, 0x0008
-    st  r4, r5
-
-    ldi r4, 0x00D2      
-    ldi r5, 0x0028
-    st  r4, r5
-
-    ldi r4, 0x00D4      
-    ldi r5, 0x0018
-    st  r4, r5
-
-
-    ldi r4, 0x00A6      
-    ldi r5, 0x0400      
-    st  r4, r5
-
-    ldi r4, 0x00A8      
-    ldi r5, 0x1400      
-    st  r4, r5
-
-    ldi r4, 0x00AA      
-    ldi r5, 0x0C00      
-    st  r4, r5
-
+    ldv r1, mem1
+    ldi r3, 0b1000000000000000 # 16 bits in column
+    st r1, r3
+    ldi r4, 0b1000000000000000 # Pointer in current column
+    ei
+    loop:
+        wait
+        br loop
     halt
 
-end.
+end. 
