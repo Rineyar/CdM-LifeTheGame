@@ -135,12 +135,15 @@ life_handler>
         if 
             cmp r2, r3
         is z
-            bnz exit
+            ldi r4, 0b1000000000000000
+            ld r0, r0
+            ld r1, r3
+            xor r4, r3, r3
+            move r1, r5
+            st r5, r3
+            rti
         fi
         br loop
-    exit:
-        rti
-    
 
 # Main program section
 rsect main
