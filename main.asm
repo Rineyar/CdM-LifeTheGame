@@ -34,7 +34,7 @@ set_handler>
     ld r0, r0
     ld r5, r3
     
-    # Kill everyone
+    # Clear display and set pointer to start
     ldi r2, 4
     if 
         cmp r0, r2
@@ -55,6 +55,7 @@ set_handler>
         ldi r4, 0b1000000000000000
         move r1, r5
         st r5, r4
+        rti
     fi
     
     # Pointer up
@@ -63,9 +64,12 @@ set_handler>
         cmp r0, r2
     is z
         xor r4, r3, r3
+
         rol r4
+
         xor r4, r3, r3
         st r5, r3
+        rti
     fi
     
     # Pointer right
@@ -75,11 +79,34 @@ set_handler>
     is z
         xor r4, r3, r3
         st r5, r3
-        inc r5
-        inc r5
+
+        ldi r6, 64 # Teleport from right to left if needed
+        push r2
+        sub r1, r5, r2
+        if
+            cmp r2, r6
+        is z, or
+            ldi r6, 128
+            cmp r2, r6
+        is z, or
+            ldi r6, 192
+            cmp r2, r6
+        is z, or
+            ldi r6, 256
+            cmp r2, r6
+        is z
+            ldi r6, 63
+            sub r5, r6, r5
+        else
+            inc r5
+            inc r5
+        fi
+        pop r2
+
         ld r5, r3
         xor r4, r3, r3
         st r5, r3 
+        rti
     fi
     
     # Pointer left
@@ -89,11 +116,34 @@ set_handler>
     is z
         xor r4, r3
         st r5, r3
-        dec r5
-        dec r5
+
+        ldi r6, 1 # Teleport from left to right if needed
+        push r2
+        sub r1, r5, r2
+        if
+            cmp r2, r6
+        is z, or
+            ldi r6, 65
+            cmp r2, r6
+        is z, or
+            ldi r6, 129
+            cmp r2, r6
+        is z, or
+            ldi r6, 193
+            cmp r2, r6
+        is z
+            ldi r6, 63
+            add r5, r6, r5
+        else
+            dec r5
+            dec r5
+        fi
+        pop r2
+
         ld r5, r3
         xor r4, r3
-        st r5, r3 
+        st r5, r3
+        rti 
     fi
 
     # Pointer down
@@ -105,6 +155,7 @@ set_handler>
         ror r4
         xor r4, r3
         st r5, r3
+        rti
     fi
 
     # Set current cell alive or dead
@@ -114,10 +165,8 @@ set_handler>
     is z
         xor r4, r3
         st r5, r3
+        rti
     fi
-
-    ldi r2, 0
-    rti
 
 life_handler>
     ldi r0, 0xfff0
