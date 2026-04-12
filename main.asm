@@ -64,9 +64,30 @@ set_handler>
         cmp r0, r2
     is z
         xor r4, r3, r3
+        st r5, r3
 
-        rol r4
+        ldi r6, 0b1000000000000000 # Move to other display if needed 
+        if
+            cmp r4, r6
+        is z
+            ldi r6, 130
+            add r1, r6, r6
+            if
+                cmp r5, r6
+            is mi
+                ldi r6, 384
+                add r5, r6, r5
+                ldi r4, 1
+            else
+                ldi r6, 128
+                sub r5, r6, r5
+                ldi r4, 1
+            fi
+        else
+            shl r4
+        fi
 
+        ld r5, r3
         xor r4, r3, r3
         st r5, r3
         rti
@@ -80,22 +101,22 @@ set_handler>
         xor r4, r3, r3
         st r5, r3
 
-        ldi r6, 64 # Teleport from right to left if needed
-        push r2
-        sub r1, r5, r2
+        push r2 # Move from right to left if needed
+        sub r5, r1, r2
         if
+            ldi r6, 126 
             cmp r2, r6
         is z, or
-            ldi r6, 128
+            ldi r6, 254
             cmp r2, r6
         is z, or
-            ldi r6, 192
+            ldi r6, 346
             cmp r2, r6
         is z, or
-            ldi r6, 256
+            ldi r6, 510
             cmp r2, r6
         is z
-            ldi r6, 63
+            ldi r6, 126
             sub r5, r6, r5
         else
             inc r5
@@ -114,25 +135,24 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3
+        xor r4, r3, r3
         st r5, r3
 
-        ldi r6, 1 # Teleport from left to right if needed
-        push r2
-        sub r1, r5, r2
+        push r2 # Move from left to right if needed
+        sub r5, r1, r2
         if
+            tst r2
+        is z, or
+            ldi r6, 128
             cmp r2, r6
         is z, or
-            ldi r6, 65
+            ldi r6, 256
             cmp r2, r6
         is z, or
-            ldi r6, 129
-            cmp r2, r6
-        is z, or
-            ldi r6, 193
+            ldi r6, 384
             cmp r2, r6
         is z
-            ldi r6, 63
+            ldi r6, 126 
             add r5, r6, r5
         else
             dec r5
@@ -141,7 +161,7 @@ set_handler>
         pop r2
 
         ld r5, r3
-        xor r4, r3
+        xor r4, r3, r3
         st r5, r3
         rti 
     fi
@@ -152,13 +172,36 @@ set_handler>
         cmp r0, r2
     is z
         xor r4, r3
-        ror r4
+        st r5, r3
+        
+        ldi r6, 1 # Move to other display if needed 
+        if
+            cmp r4, r6
+        is z
+            ldi r6, 384
+            add r1, r6, r6
+            if
+                cmp r5, r6
+            is pl
+                ldi r6, 384
+                sub r5, r6, r5
+                ldi r4, 0b1000000000000000
+            else
+                ldi r6, 128
+                add r5, r6, r5
+                ldi r4, 0b1000000000000000
+            fi
+        else
+            shr r4
+        fi
+
+        ld r5, r3
         xor r4, r3
         st r5, r3
         rti
     fi
 
-    # Set current cell alive or dead
+    # Set current cell to opposite
     shl r2
     if 
         cmp r0, r2
@@ -172,8 +215,8 @@ life_handler>
     ldi r0, 0xfff0
     ld r0, r2
     ld r5, r3 
-    xor r4, r3, r3
-    st r5, r3 # Remove pointer from display
+    xor r4, r3, r3 # Remove pointer from display
+    st r5, r3 
     loop:
         ldi r4, mem2
         ld r4, r1
@@ -184,15 +227,17 @@ life_handler>
         if 
             cmp r2, r3
         is z
-            ldi r4, 0b1000000000000000
             ld r0, r0
-            ld r1, r3
+
+            move r1, r5 # Set pointer to start for further setting
+            ld r5, r3
+            ldi r4, 0b1000000000000000
             xor r4, r3, r3
-            move r1, r5
             st r5, r3
             rti
         fi
         br loop
+
 
 # Main program section
 rsect main
