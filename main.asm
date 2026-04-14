@@ -1,9 +1,11 @@
 asect 0
 main: ext               # Declare labels
 default_handler: ext    # as external
-set_handler: ext
-life_handler: ext
-button_flag: ext
+ptr_up: ext
+ptr_right: ext
+ptr_down: ext
+ptr_left: ext
+life: ext
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -14,8 +16,11 @@ dc default_handler, 0   # Unaligned PC
 dc default_handler, 0   # Invalid instruction
 dc default_handler, 0   # Double fault
 
-dc set_handler, 0
-dc life_handler, 0
+dc ptr_up, 0
+dc ptr_right, 0
+dc ptr_down, 0
+dc ptr_left, 0
+dc life, 0
 align 0x0080            # Reserve space for the rest 
                         # of IVT
 
@@ -29,204 +34,137 @@ default_handler>
 #IRQ handlers section
 rsect irq_handlers
 
-set_handler>
-    ldi r0, 0xfff0 # Button flags
-    ld r0, r0
-    
-    # Clear display and set pointer to start
-    ldi r3, 4
-    if 
-        cmp r0, r3
-    is z
-        move r1, r5
-        ldi r4, len
-        ld r4, r4
-        add r1, r4, r4
-        while
-            cmp r5, r4
-        stays nz 
-            ldi r4, 0b1111111111111111
-            ldi r2, 0b1000000000000000 # set column
-            clr r2
-            inc r5
-            inc r5
-        wend
-        ldi r4, 0b1000000000000000
-        move r1, r5
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti
-    fi
-    
-    # Pointer up
-    shl r3
-    if 
-        cmp r0, r3
-    is z
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
+ptr_up>
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
 
-        ldi r6, 0b1000000000000000 # Move to other display if needed 
+    ldi r3, 0b1000000000000000 # Move to other display if needed 
+    if
+        cmp r4, r3
+    is z
+        ldi r3, 130
+        add r1, r3, r3
         if
-            cmp r4, r6
-        is z
-            ldi r6, 130
-            add r1, r6, r6
-            if
-                cmp r5, r6
-            is mi
-                ldi r6, 384
-                add r5, r6, r5
-                ldi r4, 1
-            else
-                ldi r6, 128
-                sub r5, r6, r5
-                ldi r4, 1
-            fi
+            cmp r5, r3
+        is mi
+            ldi r3, 384
+            add r5, r3, r5
+            ldi r4, 1
         else
-            shl r4
+            ldi r3, 128
+            sub r5, r3, r5
+            ldi r4, 1
         fi
-
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti
+    else
+        shl r4
     fi
+
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti
+
+ptr_right>
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+
     
-    # Pointer right
-    shl r3
-    if 
-        cmp r0, r3
+    sub r5, r1, r3 # Move from right to left if needed
+    if
+        ldi r6, 126 
+        cmp r3, r6
+    is z, or
+        ldi r6, 254
+        cmp r3, r6
+    is z, or
+        ldi r6, 346
+        cmp r3, r6
+    is z, or
+        ldi r6, 510
+        cmp r3, r6
     is z
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-
-        
-        sub r5, r1, r3 # Move from right to left if needed
-        if
-            ldi r6, 126 
-            cmp r3, r6
-        is z, or
-            ldi r6, 254
-            cmp r3, r6
-        is z, or
-            ldi r6, 346
-            cmp r3, r6
-        is z, or
-            ldi r6, 510
-            cmp r3, r6
-        is z
-            ldi r6, 126
-            sub r5, r6, r5
-        else
-            inc r5
-            inc r5
-        fi
-
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti
+        ldi r6, 126
+        sub r5, r6, r5
+    else
+        inc r5
+        inc r5
     fi
+
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti
+
+ptr_down>
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
     
-    # Pointer left
-    shl r3
-    if 
-        cmp r0, r3
+    ldi r3, 1 # Move to other display if needed 
+    if
+        cmp r4, r3
     is z
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-
-        sub r5, r1, r3 # Move from left to right if needed
+        ldi r3, 384
+        add r1, r3, r3
         if
-            tst r3
-        is z, or
-            ldi r6, 128
-            cmp r3, r6
-        is z, or
-            ldi r6, 256
-            cmp r3, r6
-        is z, or
-            ldi r6, 384
-            cmp r3, r6
-        is z
-            ldi r6, 126 
-            add r5, r6, r5
+            cmp r5, r3
+        is pl
+            ldi r3, 384
+            sub r5, r3, r5
+            ldi r4, 0b1000000000000000
         else
-            dec r5
-            dec r5
+            ldi r3, 128
+            add r5, r3, r5
+            ldi r4, 0b1000000000000000
         fi
-
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti 
+    else
+        shr r4
     fi
 
-    # Pointer down
-    shl r3
-    if 
-        cmp r0, r3
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti
+
+ptr_left>
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+
+    sub r5, r1, r3 # Move from left to right if needed
+    if
+        tst r3
+    is z, or
+        ldi r6, 128
+        cmp r3, r6
+    is z, or
+        ldi r6, 256
+        cmp r3, r6
+    is z, or
+        ldi r6, 384
+        cmp r3, r6
     is z
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        
-        ldi r6, 1 # Move to other display if needed 
-        if
-            cmp r4, r6
-        is z
-            ldi r6, 384
-            add r1, r6, r6
-            if
-                cmp r5, r6
-            is pl
-                ldi r6, 384
-                sub r5, r6, r5
-                ldi r4, 0b1000000000000000
-            else
-                ldi r6, 128
-                add r5, r6, r5
-                ldi r4, 0b1000000000000000
-            fi
-        else
-            shr r4
-        fi
-
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti
+        ldi r6, 126 
+        add r5, r6, r5
+    else
+        dec r5
+        dec r5
     fi
 
-    # Set current cell to opposite
-    shl r3
-    if 
-        cmp r0, r3
-    is z
-        ldi r2, 0b1000000000000000 # set column (st r5, r3)
-        clr r2
-        rti
-    fi
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti 
 
-life_handler>
+life>
     ldi r0, 0xfff0
-    ld r0, r2
-    ld r5, r3 
-    xor r4, r3, r3 # Remove pointer from display
-    st r5, r3 
+    
     loop:
-        ldi r4, mem2
-        ld r4, r1
-        ldi r4, mem1
-        ld r4, r1
-        ld r0, r2
-        ldi r3, 2 # Check if break
+        ld r0, r3
         if 
-            cmp r2, r3
+            tst r3
         is z
             ld r0, r0
 
             move r1, r5 # Set pointer to start for further setting
             ld r5, r3
             ldi r4, 0b1000000000000000
-            xor r4, r3, r3
-            st r5, r3
+            ldi r2, 0b1000000000000000 # set column (st r5, r3)
+            clr r2
             rti
         fi
         br loop
