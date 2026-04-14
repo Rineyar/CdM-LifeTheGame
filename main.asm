@@ -32,12 +32,11 @@ rsect irq_handlers
 set_handler>
     ldi r0, 0xfff0 # Button flags
     ld r0, r0
-    ld r5, r3
     
     # Clear display and set pointer to start
-    ldi r2, 4
+    ldi r3, 4
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
         move r1, r5
         ldi r4, len
@@ -46,15 +45,13 @@ set_handler>
         while
             cmp r5, r4
         stays nz 
-            ld r5, r3
-            ldi r3, 0
+            ldi r4, 0b1111111111111111
             ldi r2, 0b1000000000000000 # set column
             clr r2
             inc r5
             inc r5
         wend
         ldi r4, 0b1000000000000000
-        move r4, r3
         move r1, r5
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
@@ -62,11 +59,10 @@ set_handler>
     fi
     
     # Pointer up
-    shl r2
+    shl r3
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
 
@@ -91,36 +87,33 @@ set_handler>
             shl r4
         fi
 
-        ld r5, r3
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         rti
     fi
     
     # Pointer right
-    shl r2
+    shl r3
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
 
         
-        sub r5, r1, r2 # Move from right to left if needed
+        sub r5, r1, r3 # Move from right to left if needed
         if
             ldi r6, 126 
-            cmp r2, r6
+            cmp r3, r6
         is z, or
             ldi r6, 254
-            cmp r2, r6
+            cmp r3, r6
         is z, or
             ldi r6, 346
-            cmp r2, r6
+            cmp r3, r6
         is z, or
             ldi r6, 510
-            cmp r2, r6
+            cmp r3, r6
         is z
             ldi r6, 126
             sub r5, r6, r5
@@ -129,34 +122,31 @@ set_handler>
             inc r5
         fi
 
-        ld r5, r3
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         rti
     fi
     
     # Pointer left
-    shl r2
+    shl r3
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
 
-        sub r5, r1, r2 # Move from left to right if needed
+        sub r5, r1, r3 # Move from left to right if needed
         if
-            tst r2
+            tst r3
         is z, or
             ldi r6, 128
-            cmp r2, r6
+            cmp r3, r6
         is z, or
             ldi r6, 256
-            cmp r2, r6
+            cmp r3, r6
         is z, or
             ldi r6, 384
-            cmp r2, r6
+            cmp r3, r6
         is z
             ldi r6, 126 
             add r5, r6, r5
@@ -165,19 +155,16 @@ set_handler>
             dec r5
         fi
 
-        ld r5, r3
-        #xor r4, r3, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         rti 
     fi
 
     # Pointer down
-    shl r2
+    shl r3
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
-        #xor r4, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         
@@ -202,19 +189,16 @@ set_handler>
             shr r4
         fi
 
-        ld r5, r3
-        #xor r4, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         rti
     fi
 
     # Set current cell to opposite
-    shl r2
+    shl r3
     if 
-        cmp r0, r2
+        cmp r0, r3
     is z
-        #xor r4, r3
         ldi r2, 0b1000000000000000 # set column (st r5, r3)
         clr r2
         rti
