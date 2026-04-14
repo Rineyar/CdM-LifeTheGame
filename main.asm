@@ -258,8 +258,9 @@ align 0x04A0
 asect 0x0500
 
 main>
-    # your code here
 
+    #Макросы
+    
     macro ldv/2
         ldi $1,$2
         ld $1,$1
@@ -273,15 +274,26 @@ main>
     mend
 
     macro putw/2
+        save r2
+        save r3
         ldi r2, $1
         ldi r3, $2
         st  r2, r3
+        restore r3
+        restore r2
     mend
 
+    #НЕ ТРОГАТЬ
+
+    clr r0
+    
     ldv r1, mem1 # Almost never change, goes to the display
     ldv r5, mem1 # Active pointer to the matrix
+
+    #КОД МБ
+
     ldi r3, 0b1000000000000000 # Current column
-    st r5, r3
+    st r5,r3
     ldi r4, 0b1000000000000000 # Pointer in current column
     ei
     loop:
