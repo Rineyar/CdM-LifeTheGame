@@ -48,13 +48,16 @@ set_handler>
         stays nz 
             ld r5, r3
             ldi r3, 0
-            st r5, r3
+            ldi r2, 0b1000000000000000 # set column
+            clr r2
             inc r5
             inc r5
         wend
         ldi r4, 0b1000000000000000
+        move r4, r3
         move r1, r5
-        st r5, r4
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti
     fi
     
@@ -63,8 +66,9 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3, r3
-        st r5, r3
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
 
         ldi r6, 0b1000000000000000 # Move to other display if needed 
         if
@@ -88,8 +92,9 @@ set_handler>
         fi
 
         ld r5, r3
-        xor r4, r3, r3
-        st r5, r3
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti
     fi
     
@@ -98,11 +103,12 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3, r3
-        st r5, r3
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
 
-        push r2 # Move from right to left if needed
-        sub r5, r1, r2
+        
+        sub r5, r1, r2 # Move from right to left if needed
         if
             ldi r6, 126 
             cmp r2, r6
@@ -122,11 +128,11 @@ set_handler>
             inc r5
             inc r5
         fi
-        pop r2
 
         ld r5, r3
-        xor r4, r3, r3
-        st r5, r3 
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti
     fi
     
@@ -135,11 +141,11 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3, r3
-        st r5, r3
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
 
-        push r2 # Move from left to right if needed
-        sub r5, r1, r2
+        sub r5, r1, r2 # Move from left to right if needed
         if
             tst r2
         is z, or
@@ -158,11 +164,11 @@ set_handler>
             dec r5
             dec r5
         fi
-        pop r2
 
         ld r5, r3
-        xor r4, r3, r3
-        st r5, r3
+        #xor r4, r3, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti 
     fi
 
@@ -171,8 +177,9 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3
-        st r5, r3
+        #xor r4, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         
         ldi r6, 1 # Move to other display if needed 
         if
@@ -196,8 +203,9 @@ set_handler>
         fi
 
         ld r5, r3
-        xor r4, r3
-        st r5, r3
+        #xor r4, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti
     fi
 
@@ -206,8 +214,9 @@ set_handler>
     if 
         cmp r0, r2
     is z
-        xor r4, r3
-        st r5, r3
+        #xor r4, r3
+        ldi r2, 0b1000000000000000 # set column (st r5, r3)
+        clr r2
         rti
     fi
 
@@ -292,9 +301,10 @@ main>
 
     #КОД МБ
 
-    ldi r3, 0b1000000000000000 # Current column
-    st r5,r3
     ldi r4, 0b1000000000000000 # Pointer in current column
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+
     ei
     loop:
         wait
