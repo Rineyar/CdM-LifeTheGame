@@ -6,6 +6,7 @@ ptr_right: ext
 ptr_down: ext
 ptr_left: ext
 life: ext
+reset_all: ext
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -21,6 +22,8 @@ dc ptr_right, 0
 dc ptr_down, 0
 dc ptr_left, 0
 dc life, 0
+dc reset_all, 0
+
 align 0x0080            # Reserve space for the rest 
                         # of IVT
 
@@ -161,7 +164,6 @@ life>
             ld r0, r0
 
             move r1, r5 # Set pointer to start for further setting
-            ld r5, r3
             ldi r4, 0b1000000000000000
             ldi r2, 0b1000000000000000 # set column (st r5, r3)
             clr r2
@@ -169,6 +171,12 @@ life>
         fi
         br loop
 
+reset_all>
+    move r1, r5 # Set pointer to start for further setting
+    ldi r4, 0b1000000000000000
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti
 
 # Main program section
 rsect main
