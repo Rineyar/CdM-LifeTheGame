@@ -77,19 +77,19 @@ ptr_right>
     clr r2
 
     
-    sub r5, r1, r3 # Move from right to left if needed
+    # Move from right to left if needed
     if
         ldi r6, 126 
-        cmp r3, r6
+        cmp r5, r6
     is z, or
         ldi r6, 254
-        cmp r3, r6
+        cmp r5, r6
     is z, or
         ldi r6, 346
-        cmp r3, r6
+        cmp r5, r6
     is z, or
         ldi r6, 510
-        cmp r3, r6
+        cmp r5, r6
     is z
         ldi r6, 126
         sub r5, r6, r5
@@ -139,18 +139,18 @@ ptr_left>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
 
-    sub r5, r1, r3 # Move from left to right if needed
+    # Move from left to right if needed
     if
-        tst r3
+        tst r5
     is z, or
         ldi r6, 128
-        cmp r3, r6
+        cmp r5, r6
     is z, or
         ldi r6, 256
-        cmp r3, r6
+        cmp r5, r6
     is z, or
         ldi r6, 384
-        cmp r3, r6
+        cmp r5, r6
     is z
         ldi r6, 126 
         add r5, r6, r5
@@ -174,7 +174,7 @@ life>
         is z
             ld r0, r0
 
-            move r1, r5 # Set pointer to start for further setting
+            ldi r5, 0 # Set pointer to start for further setting
             ldi r4, 0b1000000000000000
             ldi r2, 0b1000000000000000 # set column (st r5, r3)
             clr r2
@@ -185,7 +185,7 @@ life>
 asect 0x05a0
 
 reset_all>
-    move r1, r5 # Set pointer to start for further setting
+    ldi r5, 0 # Set pointer to start for further setting
     ldi r4, 0b1000000000000000
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
@@ -194,20 +194,23 @@ reset_all>
 asect 0x07a0
 
 build_plane>
-    move r1, r5 # Set pointer to start for further setting
-    ldi r4, 0b1101111111111111
+    ldi r5, 0 # Set pointer to start for further setting
+    ldi r4, 0b0010000000000000
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
     inc r5
     inc r5
-    ldi r4, 0b0101111111111111
+    ldi r4, 0b1010000000000000
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
     inc r5
     inc r5
-    ldi r4, 0b1001111111111111
+    ldi r4, 0b0110000000000000
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
+
+    ldi r4, 0b1000000000000000
+
     rti
 
 # Main program section
@@ -245,8 +248,12 @@ main>
 
     #КОД МБ
 
+    putw 0x0040,0x05a0
+    putw 0x0044,0x07a0
+
     ldi r4, 0b1000000000000000 # Pointer in current column
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r5, 0
     clr r2
 
     ei
