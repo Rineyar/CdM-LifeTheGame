@@ -39,6 +39,8 @@ default_handler>
 #IRQ handlers section
 rsect irq_handlers
 
+asect 0x00a0
+    
 ptr_up>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
@@ -67,6 +69,8 @@ ptr_up>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
     rti
+
+asect 0x01a0
 
 ptr_right>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
@@ -98,6 +102,8 @@ ptr_right>
     clr r2
     rti
 
+asect 0x02a0
+
 ptr_down>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
@@ -127,6 +133,8 @@ ptr_down>
     clr r2
     rti
 
+asect 0x03a0
+
 ptr_left>
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
@@ -155,6 +163,8 @@ ptr_left>
     clr r2
     rti 
 
+asect 0x4a0
+
 life>   
     loop:
         ldi r0, 0xfff0
@@ -172,12 +182,16 @@ life>
         fi
         br loop
 
+asect 0x05a0
+
 reset_all>
     move r1, r5 # Set pointer to start for further setting
     ldi r4, 0b1000000000000000
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
     rti
+
+asect 0x07a0
 
 build_plane>
     move r1, r5 # Set pointer to start for further setting
@@ -198,21 +212,7 @@ build_plane>
 
 # Main program section
 rsect main
-button_flag: dc  0xfff0
-asect 0x0080 #Переменные
-len: dc 256 #len*16 - матрица 64*64
-memtmp: dc 0x0080
-mem1: dc 0x00A0 #адрес первой матрицы
-mem2: dc 0x02A0 #адрес второй матрицы
-
-align 0x02A0
-
-asect 0x02A0 
-align 0x04A0
-
-
-
-asect 0x0500
+asect 0x08a0
 
 main>
 
@@ -242,10 +242,6 @@ main>
 
     #НЕ ТРОГАТЬ
 
-    clr r0
-    
-    ldv r1, mem1 # Almost never change, goes to the display
-    ldv r5, mem1 # Active pointer to the matrix
 
     #КОД МБ
 
