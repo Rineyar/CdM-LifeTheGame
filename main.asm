@@ -7,6 +7,7 @@ ptr_down: ext
 ptr_left: ext
 life: ext
 reset_all: ext
+build_plane: ext
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -23,6 +24,7 @@ dc ptr_down, 0
 dc ptr_left, 0
 dc life, 0
 dc reset_all, 0
+dc build_plane, 0
 
 align 0x0080            # Reserve space for the rest 
                         # of IVT
@@ -153,10 +155,9 @@ ptr_left>
     clr r2
     rti 
 
-life>
-    ldi r0, 0xfff0
-    
+life>   
     loop:
+        ldi r0, 0xfff0
         ld r0, r3
         if 
             tst r3
@@ -174,6 +175,23 @@ life>
 reset_all>
     move r1, r5 # Set pointer to start for further setting
     ldi r4, 0b1000000000000000
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    rti
+
+build_plane>
+    move r1, r5 # Set pointer to start for further setting
+    ldi r4, 0b1101111111111111
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    inc r5
+    inc r5
+    ldi r4, 0b0101111111111111
+    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    clr r2
+    inc r5
+    inc r5
+    ldi r4, 0b1001111111111111
     ldi r2, 0b1000000000000000 # set column (st r5, r3)
     clr r2
     rti
