@@ -388,7 +388,7 @@ two_towers>
     rti
 
 rsect main
-asect 0x08a0
+asect 0x09a0
 
 main>
 
