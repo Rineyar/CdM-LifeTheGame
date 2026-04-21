@@ -191,7 +191,7 @@ reset_all>
     clr r2
     rti
 
-asect 0x07a0
+asect 0x06a0
 
 build_plane>
     ldi r5, 0 # Set pointer to start for further setting
@@ -212,6 +212,8 @@ build_plane>
     ldi r4, 0b1000000000000000
 
     rti
+
+asect 0x07a0
 
 # Main program section
 rsect main
@@ -248,8 +250,8 @@ main>
 
     #КОД МБ
 
-    putw 0x0040,0x05a0
-    putw 0x0044,0x07a0
+    # putw 0x0040,0x05a0
+    # putw 0x0044,0x06a0
 
     ldi r4, 0b1000000000000000 # Pointer in current column
     ldi r2, 0b1000000000000000 # set column (st r5, r3)

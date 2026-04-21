@@ -18,12 +18,11 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="bus 0"/>
     </tool>
     <tool name="Probe">
-      <a name="facing" val="south"/>
       <a name="radix" val="16"/>
     </tool>
     <tool name="Tunnel">
-      <a name="width" val="8"/>
-      <a name="label" val="vec-adr"/>
+      <a name="width" val="32"/>
+      <a name="label" val="strup"/>
       <a name="labelfont" val="SansSerif plain 9"/>
     </tool>
     <tool name="Pull Resistor">
@@ -170,6 +169,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="facing" val="north"/>
     </tool>
   </lib>
+  <lib desc="file#GPU Compute Module_WW.circ" name="12"/>
   <main name="main"/>
   <options>
     <a name="gateUndefined" val="ignore"/>
@@ -4732,7 +4732,6 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="down11"/>
       <a name="labelfont" val="SansSerif plain 9"/>
     </comp>
-    <comp lib="10" loc="(470,820)" name="gpu_compute_module"/>
     <comp lib="0" loc="(900,970)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="up21"/>
@@ -5367,6 +5366,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="next gen 3"/>
       <a name="labelloc" val="south"/>
     </comp>
+    <comp lib="12" loc="(470,820)" name="gpu_compute_module"/>
     <comp lib="0" loc="(1480,270)" name="Tunnel">
       <a name="width" val="16"/>
       <a name="label" val="start pos"/>
