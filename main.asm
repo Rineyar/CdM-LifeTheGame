@@ -8,6 +8,7 @@ ptr_left: ext
 life: ext
 reset_all: ext
 build_plane: ext
+two_towers: ext       # <- новая метка для отдельной функции
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -25,6 +26,7 @@ dc ptr_left, 0
 dc life, 0
 dc reset_all, 0
 dc build_plane, 0
+dc two_towers, 0      # <- добавляем в IVT (по желанию)
 
 align 0x0080            # Reserve space for the rest 
                         # of IVT
@@ -215,7 +217,176 @@ build_plane>
 
 asect 0x07a0
 
-# Main program section
+two_towers>
+    ldi r5, 0#левый верхний угол
+
+    # столбец 1
+    ldi r4, 0b0000000000010100
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 2
+    ldi r4, 0b0000000000000010
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 3
+    ldi r4, 0b0000000000100010
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 4
+    ldi r4, 0b0000000000000010
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 5
+    ldi r4, 0b0000000000010010
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 6
+    ldi r4, 0b0000000000001110
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 7
+    ldi r4, 0b0000001010000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 8
+    ldi r4, 0b0000000001000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 9
+    ldi r4, 0b0000010001000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 10
+    ldi r4, 0b0000000001000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 11
+    ldi r4, 0b0000001001000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 12
+    ldi r4, 0b0000000111000000
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    inc r5
+    inc r5# пропуск 13 столбца
+    inc r5
+    inc r5# пропуск 14 столбца
+    inc r5
+    inc r5# пропуск 15 столбца
+    inc r5
+    inc r5# пропуск 16 столбца
+
+    # столбец 17
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 18
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    inc r5
+    inc r5# пропуск 19 столбца
+    inc r5
+    inc r5# пропуск 20 столбца
+
+    # столбец 21
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 22
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    inc r5
+    inc r5# пропуск 23 столбца
+    inc r5
+    inc r5# пропуск 24 столбца
+    inc r5
+    inc r5# пропуск 25 столбца
+
+    # столбец 26
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 27
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    inc r5
+    inc r5# пропуск 28 столбца
+    inc r5
+    inc r5# пропуск 29 столбца
+
+    # столбец 30
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+    inc r5
+    inc r5
+
+    # столбец 31
+    ldi r4, 0b0011001100110011
+    ldi r2, 0b1000000000000000
+    clr r2
+
+    ldi r4, 0b1000000000000000    # завершающая установка
+    rti
+
 rsect main
 asect 0x08a0
 
