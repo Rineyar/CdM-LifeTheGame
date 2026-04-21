@@ -5,10 +5,11 @@ ptr_up: ext
 ptr_right: ext
 ptr_down: ext
 ptr_left: ext
-life: ext
+life_off: ext
 reset_all: ext
 build_plane: ext
 two_towers: ext       # <- новая метка для отдельной функции
+life_on: ext
 
 # Interrupt vector table (IVT)
 # Place a vector to program start and
@@ -23,10 +24,11 @@ dc ptr_up, 0
 dc ptr_right, 0
 dc ptr_down, 0
 dc ptr_left, 0
-dc life, 0
+dc life_off, 0
 dc reset_all, 0
 dc build_plane, 0
 dc two_towers, 0      # <- добавляем в IVT (по желанию)
+dc life_on, 0
 
 align 0x0080            # Reserve space for the rest 
                         # of IVT
@@ -44,7 +46,8 @@ rsect irq_handlers
 asect 0x00a0
     
 ptr_up>
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
 
     ldi r3, 0b1000000000000000 # Move to other display if needed 
@@ -68,14 +71,16 @@ ptr_up>
         shl r4
     fi
 
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
+    clr r1
     rti
 
 asect 0x01a0
 
 ptr_right>
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
 
     
@@ -100,14 +105,16 @@ ptr_right>
         inc r5
     fi
 
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
+    clr r1
     rti
 
 asect 0x02a0
 
 ptr_down>
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
     
     ldi r3, 1 # Move to other display if needed 
@@ -131,14 +138,16 @@ ptr_down>
         shr r4
     fi
 
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column
     clr r2
+    clr r1
     rti
 
 asect 0x03a0
 
 ptr_left>
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
 
     # Move from left to right if needed
@@ -161,64 +170,67 @@ ptr_left>
         dec r5
     fi
 
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column
     clr r2
+    clr r1
     rti 
 
 asect 0x4a0
 
-life>   
-    loop:
-        ldi r0, 0xfff0
-        ld r0, r3
-        if 
-            tst r3
-        is z
-            ld r0, r0
-
-            ldi r5, 0 # Set pointer to start for further setting
-            ldi r4, 0b1000000000000000
-            ldi r2, 0b1000000000000000 # set column (st r5, r3)
-            clr r2
-            rti
-        fi
-        br loop
+life_off>   
+    ldi r1, 1 # interruption flag
+    ldi r5, 0 # Set pointer to start for further setting
+    ldi r4, 0b1000000000000000
+    ldi r2, 0b1000000000000000 # set column 
+    clr r2
+    clr r1
+    rti
 
 asect 0x05a0
 
 reset_all>
+    ldi r1, 1 # interruption flag
     ldi r5, 0 # Set pointer to start for further setting
     ldi r4, 0b1000000000000000
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
+    clr r1
     rti
 
 asect 0x06a0
 
 build_plane>
-    ldi r5, 0 # Set pointer to start for further setting
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # hide pointer
+    clr r2
+
     ldi r4, 0b0010000000000000
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column
     clr r2
     inc r5
     inc r5
     ldi r4, 0b1010000000000000
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
     inc r5
     inc r5
     ldi r4, 0b0110000000000000
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
+    ldi r2, 0b1000000000000000 # set column 
     clr r2
 
+    ldi r5, 0
     ldi r4, 0b1000000000000000
-
+    ldi r2, 0b1000000000000000 # set pointer
+    clr r2
+    clr r1
     rti
 
 asect 0x07a0
 
 two_towers>
-    ldi r5, 0#левый верхний угол
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # hide pointer
+    clr r2
 
     # столбец 1
     ldi r4, 0b0000000000010100
@@ -385,10 +397,24 @@ two_towers>
     clr r2
 
     ldi r4, 0b1000000000000000    # завершающая установка
+    ldi r5, 0
+    ldi r2, 0b1000000000000000 # set pointer
+    nop
+    nop
+    clr r2
+    clr r1
+    rti
+
+asect 0x09a0
+life_on>
+    ldi r1, 1 # interruption flag
+    ldi r2, 0b1000000000000000 # hide pointer
+    clr r2
+    clr r1
     rti
 
 rsect main
-asect 0x09a0
+asect 0x09b0
 
 main>
 
@@ -425,9 +451,11 @@ main>
     # putw 0x0044,0x06a0
 
     ldi r4, 0b1000000000000000 # Pointer in current column
-    ldi r2, 0b1000000000000000 # set column (st r5, r3)
-    ldi r5, 0
+    ldi r2, 0b1000000000000000 # set column 
+    nop
+    nop
     clr r2
+    ldi r5, 0
 
     ei
     loop:
