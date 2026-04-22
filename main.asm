@@ -177,13 +177,13 @@ ptr_left>
 
 asect 0x4a0
 
-life_off>   
-    ldi r1, 1 # interruption flag
+life_off>
+    clr r1
     ldi r5, 0 # Set pointer to start for further setting
     ldi r4, 0b1000000000000000
     ldi r2, 0b1000000000000000 # set column 
     clr r2
-    clr r1
+    
     rti
 
 asect 0x05a0
@@ -407,10 +407,10 @@ two_towers>
 
 asect 0x09a0
 life_on>
-    ldi r1, 1 # interruption flag
+    
     ldi r2, 0b1000000000000000 # hide pointer
     clr r2
-    clr r1
+    ldi r1, 1 # interruption flag
     rti
 
 rsect main
